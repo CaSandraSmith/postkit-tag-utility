@@ -31,7 +31,7 @@ parseTags("can't,won't");
 parseTags("coding,,typescript");
 // => ["coding", "typescript"]
 
-parseTags(123);
+parseTags(123); 🤔 Seems like typescript will cantch this because your input type is string
 // => []
 
 parseTags(",coding, typescript,");
@@ -69,7 +69,7 @@ normalizeTag("***");
 normalizeTag("lot    of   space");
 // => "lot of space"
 
-normalizeTag("he,llo");
+normalizeTag("he,llo"); 🤔 This might cause problems. What if "Hi,mom!" we get Himom! bad user input creates a problem. 
 // => "hello"
 
 normalizeTag("HELLO");
@@ -119,7 +119,10 @@ removeDuplicateTags(["javascript", "javascript "]);
 
 ---
 
-### `validateTag`
+### `validateTag` 
+
+🤔 This name sounds a little vague. removeDuplicateTags is very clear. Validate tag makes sense but, maybe could be clearer as something like: isValidTag?
+
 **Description:** Return whether a tag follows your package rules.
 
 **Input:**
@@ -148,7 +151,7 @@ validateTag("this is tag");
 validateTag("this is,tag");
 // => false
 
-validateTag("THIS IS TAG");
+validateTag("THIS IS TAG"); 🤔 If normalizing removes white space and lowercases this would pass. What are the rules here? Do we need to normalize before we validate or does validate nromalize? Thnk about and put that in the docs! 
 // => false
 
 validateTag("");
@@ -160,7 +163,7 @@ validateTag("   ");
 validateTag("my tag!!");
 // => false
 
-validateTag("  tag ");
+validateTag("  tag "); 🤔 Same question, do we need to normalize first, or does normalize happen as part of validate? Make a decision and state it clearly! 
 // => false
 ```
 
