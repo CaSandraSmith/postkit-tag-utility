@@ -1,5 +1,4 @@
-import { normalizeTag } from "./normalizeTag"
-
+import { normalizeTag } from "./normalizeTag";
 /**
  * Return whether a tag follows package rules
  * @param tagStr - The tag string to check
@@ -8,7 +7,7 @@ import { normalizeTag } from "./normalizeTag"
  * isValidTag("javascript") // true
  * isValidTag("") // false
  */
-export function isValidTag(tagStr: string): boolean {
-    const normalizedTag = normalizeTag(tagStr)
-    return normalizedTag.length > 0 && normalizedTag.length <= 20
+export function isValidTag(tagStr) {
+    const normalizedTag = normalizeTag(tagStr);
+    return normalizedTag.length > 0 && normalizedTag.length <= 20;
 }

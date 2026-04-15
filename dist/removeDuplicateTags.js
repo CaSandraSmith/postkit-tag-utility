@@ -1,6 +1,5 @@
-import { normalizeTag } from "./normalizeTag"
-import { isValidTag } from "./isValidTag"
-
+import { normalizeTag } from "./normalizeTag";
+import { isValidTag } from "./isValidTag";
 /**
  * Ensure that all tags are unique
  * @param tagArr - an array of tag strings
@@ -9,14 +8,13 @@ import { isValidTag } from "./isValidTag"
  * removeDuplicateTags(["javascript", "coding", "javascript"]) // ["javascript", "coding"]
  * removeDuplicateTags(["javascript", "coding"]) // ["javascript", "coding"]
  */
-export function removeDuplicateTags(tagArr: string[] = []): string[] {
-    const tagSet = new Set<string>()
+export function removeDuplicateTags(tagArr = []) {
+    const tagSet = new Set();
     tagArr.forEach((tag) => {
-        const normalizedTag = normalizeTag(tag)
+        const normalizedTag = normalizeTag(tag);
         if (isValidTag(normalizedTag)) {
-            tagSet.add(normalizedTag)
+            tagSet.add(normalizedTag);
         }
-    })
-
-    return Array.from(tagSet)
+    });
+    return Array.from(tagSet);
 }
