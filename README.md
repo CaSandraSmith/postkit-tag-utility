@@ -26,25 +26,25 @@ parseTags("  ");
 // => []
 
 parseTags("can't,won't");
-// => ["can't", "won't"]
+// => ["cant", "wont"]
 
 parseTags("coding,,typescript");
 // => ["coding", "typescript"]
-
-parseTags(123);
-// => []
 
 parseTags(",coding, typescript,");
 // => ["coding", "typescript"]
 
 parseTags("***");
 // => []
+
+parseTags("javascript, ***, coding");
+// => ["javascript", "coding"]
 ```
 
 ---
 
 ### `normalizeTag`
-**Description:** Standardize case and whitespace.
+**Description:** Standardize case, whitespace, and special characters
 
 **Input:**
 - `tagStr` — a tag string
@@ -61,7 +61,7 @@ normalizeTag("  JavaScript  ");
 **Edge Cases**
 ```js
 normalizeTag("can't");
-// => "can't"
+// => "cant"
 
 normalizeTag("***");
 // => ""
@@ -69,17 +69,11 @@ normalizeTag("***");
 normalizeTag("lot    of   space");
 // => "lot of space"
 
-normalizeTag("he,llo");
-// => "hello"
-
 normalizeTag("HELLO");
 // => "hello"
 
 normalizeTag("hello");
 // => "hello"
-
-normalizeTag(123);
-// => ""
 ```
 
 ---
@@ -104,7 +98,7 @@ removeDuplicateTags(["javascript", "coding", "javascript"]);
 removeDuplicateTags(["javascript", "coding"]);
 // => ["javascript", "coding"]
 
-removeDuplicateTags(["javascript", 123]);
+removeDuplicateTags(["javascript"]);
 // => ["javascript"]
 
 removeDuplicateTags();
@@ -119,7 +113,7 @@ removeDuplicateTags(["javascript", "javascript "]);
 
 ---
 
-### `validateTag`
+### `isValidTag`
 **Description:** Return whether a tag follows your package rules.
 
 **Input:**
@@ -130,49 +124,59 @@ removeDuplicateTags(["javascript", "javascript "]);
 
 **Example:**
 ```js
-validateTag("javascript");
+isValidTag("javascript");
 // => true
 
-validateTag("");
+isValidTag("");
 // => false
 ```
 
 **Edge Cases**
 ```js
-validateTag(123);
-// => false
-
-validateTag("this is tag");
+isValidTag("this is tag");
 // => true
 
-validateTag("this is,tag");
+isValidTag("this is,tag");
+// => true
+
+isValidTag("THIS IS TAG");
+// => true
+
+isValidTag("");
 // => false
 
-validateTag("THIS IS TAG");
+isValidTag("   ");
 // => false
 
-validateTag("");
+isValidTag("my tag!!");
+// => true
+
+isValidTag("  tag ");
+// => true
+
+isValidTag("123");
+// => true
+
+isValidTag("this is a very long tag that exceeds the limit");
 // => false
 
-validateTag("   ");
-// => false
-
-validateTag("my tag!!");
-// => false
-
-validateTag("  tag ");
-// => false
+isValidTag("a");
+// => true
 ```
 
 ## Design Notes
 **Strict type handling** — every function defensively handles non-string inputs like numbers, null, and undefined, returning a safe default like `[]`, `""`, or `false` instead of crashing.
 
-**Comma as the standard delimiter** — `parseTags` uses commas to split input, and `normalizeTag` strips commas out of individual tags, so the two functions work consistently together.
+**Comma as the standard delimiter** — `parseTags` uses commas to split input and is the only function that handles commas. By the time a tag reaches any other function, commas should already be gone.
 
-**Lowercase as the standard** — normalization converts everything to lowercase, and validation rejects anything that isn't already lowercase, meaning the two functions are designed to be used together before storing or comparing tags.
+**Lowercase as the standard** — all functions normalize to lowercase internally before doing their work, so input like `"THIS IS TAG"` is treated the same as `"this is tag"` across the entire library.
 
 **Whitespace is collapsed but spaces are allowed** — tags can contain spaces like `"web dev"`, but extra whitespace gets collapsed to a single space and trimmed, striking a balance between flexibility and cleanliness.
 
-**Deduplication is case and whitespace aware** — `removeDuplicateTags` treats `"JavaScript"` and `"javascript"` as duplicates, and `"javascript"` and `"javascript "` as duplicates, meaning it expects normalized input or handles normalization itself.
+**Deduplication is case and whitespace aware** — `removeDuplicateTags` normalizes each tag internally before comparing, so `"JavaScript"` and `"javascript"` and `"javascript "` are all treated as duplicates.
 
-**Special characters are stripped or rejected** — `normalizeTag` removes special characters silently, while `validateTag` rejects tags containing them, giving you flexibility depending on whether you want to clean input or enforce rules at the gate.
+**Special characters including commas are always stripped** — all functions remove special characters internally before doing their work, so input like `"can't"` becomes `"cant"` and `"***"` becomes `""` consistently across the library.
+
+**`parseTags` is the only entry point for raw user input** — `normalizeTag` expects an already-split tag and should never receive raw user input directly. Commas are handled exclusively by `parseTags` as a splitting character, so by the time a tag reaches `normalizeTag`, commas should already be gone.
+
+**Tags have a 20 character limit** — `isValidTag` returns `false` for any tag exceeding 20 characters after normalization.
