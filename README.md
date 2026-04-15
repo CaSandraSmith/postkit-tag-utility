@@ -39,6 +39,9 @@ parseTags("***");
 
 parseTags("javascript, ***, coding");
 // => ["javascript", "coding"]
+
+parseTags("javascript, jffffffffffffffffffffffavascript")
+// => ["javascript"]
 ```
 
 ---
@@ -109,6 +112,9 @@ removeDuplicateTags(["JavaScript", "javascript"]);
 
 removeDuplicateTags(["javascript", "javascript "]);
 // => ["javascript"]
+
+removeDuplicateTags(["javascript javascript javascript javascript"]);
+// => []
 ```
 
 ---
@@ -180,3 +186,5 @@ isValidTag("a");
 **`parseTags` is the only entry point for raw user input** — `normalizeTag` expects an already-split tag and should never receive raw user input directly. Commas are handled exclusively by `parseTags` as a splitting character, so by the time a tag reaches `normalizeTag`, commas should already be gone.
 
 **Tags have a 20 character limit** — `isValidTag` returns `false` for any tag exceeding 20 characters after normalization.
+
+**`removeDuplicateTags` and `parseTags` uphold tag rules** - In addition to normalizing the tags, these functions uphold the character requirements of tags by calling `isValidTag` internally. Normalized tags that don't have any length or are over 20 characters are removed from the returned string arrays.
